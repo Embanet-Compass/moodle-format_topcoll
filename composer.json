@@ -1,0 +1,11 @@
+{
+  "name": "embanet-compass/moodle-format_topcoll",
+  "type": "moodle-format",
+  "description": "Collapsed Topics course format for Moodle 3x",
+  "extra": {
+    "installer-name": "topcoll",
+    "moodle": {
+      "package_folder_name": "topcoll"
+    }
+  }
+}
