@@ -29,6 +29,13 @@
 */
 
 
+
+/*
+ * ITSD-64061
+ * - Override Course banner header styles
+ * - Override label activity header styles
+ * - All <h4> changed to .h4
+ */
 .h4 {
     margin: 10px 0;
     font-family: inherit;
@@ -41,6 +48,27 @@
 #toggle-all .content .h4 span {
     background-position: left center;
 }
+#coursebanner h1.coursecode,
+#coursebanner h2.coursecode,
+#coursebanner h3.coursecode,
+#coursebanner h4.coursecode,
+#coursebanner h5.coursecode,
+#coursebanner h6.coursecode {
+    color: rgb(162,214,255);
+    font-size: 2em;
+    font-weight: 400;
+}
+.ctopics .modtype_label h1,
+.ctopics .modtype_label h2,
+.ctopics .modtype_label h3,
+.ctopics .modtype_label h4,
+.ctopics .modtype_label h5,
+.ctopics .modtype_label h6 {
+    color: rgb(112,90,62);
+    font-size: 1.1428571429em;
+    font-weight: 700;
+}
+
 
 
 
