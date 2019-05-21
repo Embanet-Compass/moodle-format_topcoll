@@ -25,9 +25,9 @@
  * @package    course/format
  * @subpackage topcoll
  * @category   event
- * @version    See the value of '$plugin->version' in version.php.
+ * @version    See the value of '$plugin->version' in below.
  * @copyright  &copy; 2017-onwards G J Barnard based upon work done by Marina Glancy.
- * @author     G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+ * @author     G J Barnard - gjbarnard at gmail dot com and {@link http://moodle.org/user/profile.php?id=442195}
  * @link       http://docs.moodle.org/en/Collapsed_Topics_course_format
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  *
@@ -50,6 +50,6 @@ class format_topcoll_observer {
      */
     public static function course_content_deleted(\core\event\course_content_deleted $event) {
         global $DB;
-        $DB->delete_records("user_preferences", array("name" => 'topcoll_toggle_'.$event->objectid)); // This is the $courseid.
+        $DB->delete_records("user_preferences", array("name" => 'topcoll_toggle_'.$event->objectid)); // $courseid.
     }
 }

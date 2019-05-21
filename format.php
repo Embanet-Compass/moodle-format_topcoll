@@ -24,9 +24,9 @@
  *
  * @package    course/format
  * @subpackage topcoll
- * @version    See the value of '$plugin->version' in version.php.
+ * @version    See the value of '$plugin->version' in below.
  * @copyright  &copy; 2009-onwards G J Barnard in respect to modifications of standard topics format.
- * @author     G J Barnard - {@link http://moodle.org/user/profile.php?id=442195}
+ * @author     G J Barnard - gjbarnard at gmail dot com and {@link http://moodle.org/user/profile.php?id=442195}
  * @link       http://docs.moodle.org/en/Collapsed_Topics_course_format
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
@@ -35,6 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->dirroot . '/course/format/topcoll/togglelib.php');
 
 // Horrible backwards compatible parameter aliasing....
 if ($ctopic = optional_param('ctopics', 0, PARAM_INT)) { // Collapsed Topics old section parameter.
@@ -59,16 +60,14 @@ if ($week = optional_param('week', 0, PARAM_INT)) { // Weeks old section paramet
 
 $context = context_course::instance($course->id);
 
-// Retrieve course format option fields and add them to the $course object.
-$courseformat = course_get_format($course);
-$course = $courseformat->get_course();
-
 if (($marker >= 0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
     $course->marker = $marker;
     course_set_marker($course->id, $marker);
 }
 
 // Make sure all sections are created.
+$courseformat = course_get_format($course);
+$course = $courseformat->get_course();
 course_create_sections_if_missing($course, range(0, $course->numsections));
 
 $renderer = $PAGE->get_renderer('format_topcoll');
@@ -83,7 +82,7 @@ if ($devicetype == "mobile") {
 }
 $renderer->set_portable($portable);
 
-if (!empty($displaysection)) {
+if ((!empty($displaysection)) && ($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE)) {
     $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
 } else {
     $defaulttogglepersistence = clean_param(get_config('format_topcoll', 'defaulttogglepersistence'), PARAM_INT);
@@ -94,10 +93,18 @@ if (!empty($displaysection)) {
     } else {
         $userpreference = null;
     }
+    $renderer->set_user_preference($userpreference);
 
     $defaultuserpreference = clean_param(get_config('format_topcoll', 'defaultuserpreference'), PARAM_INT);
+    $renderer->set_default_user_preference($defaultuserpreference);
 
-    $renderer->set_user_preference($userpreference, $defaultuserpreference, $defaulttogglepersistence);
+    $PAGE->requires->js_init_call('M.format_topcoll.init', array(
+        $course->id,
+        $userpreference,
+        $course->numsections,
+        $defaulttogglepersistence,
+        $defaultuserpreference,
+        $PAGE->user_is_editing()));
 
     $tcsettings = $courseformat->get_settings();
 
@@ -105,19 +112,21 @@ if (!empty($displaysection)) {
     echo '/* <![CDATA[ */';
 
     echo '/* -- Toggle -- */';
-    echo '.course-content ul.ctopics li.section .content .toggle,';
-    echo '.course-content ul.ctopics li.section .content.sectionhidden {';
+    echo '.course-content ul.ctopics li.section .content .toggle, .course-content ul.ctopics li.section .content.sectionhidden {';
     echo 'background-color: ';
-    echo \format_topcoll\toolbox::hex2rgba($tcsettings['togglebackgroundcolour'], $tcsettings['togglebackgroundopacity']);
-    echo ';';
+    if ($tcsettings['togglebackgroundcolour'][0] != '#') {
+        echo '#';
+    }
+    echo $tcsettings['togglebackgroundcolour'].';';
     echo '}';
 
     echo '/* -- Toggle text -- */';
-    echo '.course-content ul.ctopics li.section .content .toggle span, ';
-    echo '.course-content ul.ctopics li.section .content.sectionhidden {';
+    echo '.course-content ul.ctopics li.section .content .toggle span, .course-content ul.ctopics li.section .content.sectionhidden {';
     echo 'color: ';
-    echo \format_topcoll\toolbox::hex2rgba($tcsettings['toggleforegroundcolour'], $tcsettings['toggleforegroundopacity']);
-    echo ';';
+    if ($tcsettings['toggleforegroundcolour'][0] != '#') {
+        echo '#';
+    }
+    echo $tcsettings['toggleforegroundcolour'].';';
     echo 'text-align: ';
     switch ($tcsettings['togglealignment']) {
         case 1:
@@ -148,14 +157,18 @@ if (!empty($displaysection)) {
     echo '.course-content ul.ctopics li.section .content .toggle span:hover,';
     echo '.course-content ul.ctopics li.section .content.sectionhidden .toggle span:hover {';
     echo 'color: ';
-    echo \format_topcoll\toolbox::hex2rgba($tcsettings['toggleforegroundhovercolour'], $tcsettings['toggleforegroundhoveropacity']);
-    echo ';';
+    if ($tcsettings['toggleforegroundhovercolour'][0] != '#') {
+        echo '#';
+    }
+    echo $tcsettings['toggleforegroundhovercolour'].';';
     echo '}';
 
     echo '.course-content ul.ctopics li.section .content div.toggle:hover {';
     echo 'background-color: ';
-    echo \format_topcoll\toolbox::hex2rgba($tcsettings['togglebackgroundhovercolour'], $tcsettings['togglebackgroundhoveropacity']);
-    echo ';';
+    if ($tcsettings['togglebackgroundhovercolour'][0] != '#') {
+        echo '#';
+    }
+    echo $tcsettings['togglebackgroundhovercolour'].';';
     echo '}';
 
     $topcollsidewidth = get_string('topcollsidewidthlang', 'format_topcoll');

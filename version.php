@@ -26,7 +26,7 @@
  * @subpackage topcoll
  * @version    See the value of '$plugin->version' in below.
  * @copyright  &copy; 2009-onwards G J Barnard in respect to modifications of standard topics format.
- * @author     G J Barnard - {@link http://about.me/gjbarnard} and
+ * @author     G J Barnard - gjbarnard at gmail dot com, {@link http://about.me/gjbarnard} and
  *                           {@link http://moodle.org/user/profile.php?id=442195}
  * @link       http://docs.moodle.org/en/Collapsed_Topics_course_format
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
@@ -34,8 +34,8 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2018121901;
-$plugin->maturity = MATURITY_BETA;
-$plugin->requires  = 2018120301.00; // Moodle 3.6.1 (Build: 20181205).
+$plugin->version = 2016110101;
+$plugin->maturity = MATURITY_STABLE;
+$plugin->requires  = 2016120500.00; // 3.2 (Build: 20161205).
 $plugin->component = 'format_topcoll';
-$plugin->release = '3.6.0.2';
+$plugin->release = '3.2.1.0';
